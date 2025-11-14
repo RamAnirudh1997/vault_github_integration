@@ -1,0 +1,30 @@
+name: Vault GitHub OIDC Demo
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Retrieve secrets from Vault (OIDC)
+        uses: hashicorp/vault-action@v3
+        with:
+          method: jwt
+          url: https://vault.example.com
+          namespace: admin/uuid
+          role: github-actions-role
+
+          secrets: |
+            secret/data/app username | APP_USERNAME
+            secret/data/app password | APP_PASSWORD
+
+      - name: Use secrets
+        run: |
+          echo "User = $APP_USERNAME"
+          echo "Password = $APP_PASSWORD"
